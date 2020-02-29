@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "478686492022",
+    "firebase_url": "https://link-capture-259811.firebaseio.com",
+    "project_id": "link-capture-259811",
+    "storage_bucket": "link-capture-259811.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478686492022:android:6d916ea38b76aacac0f657",
+        "android_client_info": {
+          "package_name": "dev.codeismail.linkcapture"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478686492022-vfphjdkv2njj6u881hte3t8oo07mu8hv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDft05GPM0zZtHRlvb18p4zNKmg4MgkufQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478686492022-vfphjdkv2njj6u881hte3t8oo07mu8hv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
