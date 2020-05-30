@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LinkCapture</string>
+    <string name="open_link_label">Open Link</string>
+    <string name="cancel_label">Cancel</string>
 </resources>

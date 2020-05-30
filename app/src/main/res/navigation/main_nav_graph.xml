@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/captureFragment">
+
+    <fragment
+        android:id="@+id/captureFragment"
+        android:name="dev.codeismail.linkcapture.CaptureFragment"
+        android:label="capture_fragment"
+        tools:layout="@layout/capture_fragment" >
+        <action
+            android:id="@+id/action_captureFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+        <action
+            android:id="@+id/action_captureFragment_to_displayFragment"
+            app:destination="@id/displayFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="dev.codeismail.linkcapture.HistoryFragment"
+        android:label="history_fragment"
+        tools:layout="@layout/history_fragment" />
+    <fragment
+        android:id="@+id/displayFragment"
+        android:name="dev.codeismail.linkcapture.DisplayFragment"
+        android:label="fragment_display"
+        tools:layout="@layout/fragment_display" >
+        <action
+            android:id="@+id/action_displayFragment_to_actionDialogFragment"
+            app:destination="@id/actionDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/actionDialogFragment"
+        android:name="dev.codeismail.linkcapture.ActionDialogFragment"
+        android:label="fragment_action_dialog"
+        tools:layout="@layout/fragment_action_dialog" />
+</navigation>
