@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_captureFragment_to_displayFragment"
             app:destination="@id/displayFragment" />
+        <action
+            android:id="@+id/action_captureFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/historyFragment"
@@ -29,11 +32,17 @@
         tools:layout="@layout/fragment_display" >
         <action
             android:id="@+id/action_displayFragment_to_actionDialogFragment"
-            app:destination="@id/actionDialogFragment" />
+            app:destination="@id/actionDialogFragment"
+            app:popUpTo="@id/displayFragment" />
     </fragment>
     <dialog
         android:id="@+id/actionDialogFragment"
         android:name="dev.codeismail.linkcapture.ActionDialogFragment"
         android:label="fragment_action_dialog"
         tools:layout="@layout/fragment_action_dialog" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="dev.codeismail.linkcapture.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
 </navigation>

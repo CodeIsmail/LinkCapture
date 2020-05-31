@@ -4,17 +4,18 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dev.codeismail.linkcapture.adapter.Link
 
-class CaptureViewModel : ViewModel() {
+class SharedViewModel : ViewModel() {
 
     private val imageUri = MutableLiveData<Uri>()
-    private val linkString = MutableLiveData<String>()
+    private val link = MutableLiveData<List<Link>>()
 
-    fun passLinkData(link: String){
-        linkString.value = link
+    fun passLinkData(links: List<Link>){
+        link.value = links
     }
 
-    fun getLinkString(): LiveData<String> = linkString
+    fun getLinks(): LiveData<List<Link>> = link
 
     fun passImageData(uri: Uri){
         imageUri.value = uri

@@ -1,37 +1,21 @@
 package dev.codeismail.linkcapture
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.Context.CAMERA_SERVICE
 import android.content.pm.PackageManager
-import android.hardware.camera2.CameraAccessException
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.SparseIntArray
 import android.view.*
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.core.impl.PreviewConfig
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import com.google.firebase.ml.vision.text.FirebaseVisionText
 import kotlinx.android.synthetic.main.capture_fragment.*
 import java.io.File
-import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -68,7 +52,7 @@ class CaptureFragment : Fragment() {
         }
     }
 
-    private val viewModel: CaptureViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,6 +75,9 @@ class CaptureFragment : Fragment() {
         captureBtn.setOnClickListener {
             takePhoto()
 
+        }
+        settingBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_captureFragment_to_settingFragment)
         }
     }
 

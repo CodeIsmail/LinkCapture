@@ -1,18 +1,22 @@
 package dev.codeismail.linkcapture
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dev.codeismail.linkcapture.adapter.LinkAdapter
 import kotlinx.android.synthetic.main.fragment_action_dialog.*
 
 class ActionDialogFragment : BottomSheetDialogFragment() {
 
-    private val viewModel: CaptureViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -23,9 +27,24 @@ class ActionDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getLinkString().observe(viewLifecycleOwner, Observer {
-            linkTextView.text = it
+        val linkAdapter = LinkAdapter()
+        linkRv.apply {
+            adapter = linkAdapter
+            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            setHasFixedSize(true)
+        }
+        viewModel.getLinks().observe(viewLifecycleOwner, Observer {
+            linkAdapter.submitList(it)
         })
+        cancelBtn.setOnClickListener {
+            dialog?.dismiss()
+        }
+
+        linkAdapter.setOnItemClickListener {position ->
+            startActivity(Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(linkAdapter.getItem(position).linkString)
+            })
+        }
     }
 
     companion object {

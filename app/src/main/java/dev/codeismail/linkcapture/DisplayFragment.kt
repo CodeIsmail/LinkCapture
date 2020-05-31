@@ -6,18 +6,22 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import coil.api.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.text.FirebaseVisionText
-import kotlinx.android.synthetic.main.capture_fragment.*
+import dev.codeismail.linkcapture.adapter.Link
+import kotlinx.android.synthetic.main.fragment_display.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -26,25 +30,32 @@ class DisplayFragment : Fragment() {
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private lateinit var cameraExecutor: ExecutorService
-    private val viewModel: CaptureViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = ImageView(context)
+    ): View?{
+        return inflater.inflate(R.layout.fragment_display, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
-
+        backBtn.setOnClickListener {
+            Navigation.findNavController(requireActivity(), R.id.host_fragment).navigateUp()
+        }
         viewModel.getImageUri().observe(viewLifecycleOwner, Observer {
-            (view as ImageView).load(it)
-            startImageAnalysis(it)
+            imageDisplay.load(it)
+            val processingDialog = MaterialAlertDialogBuilder(requireContext())
+                .setView(R.layout.layout_dialog_processing).show()
+            startImageAnalysis(it, processingDialog)
         })
     }
 
-    private fun startImageAnalysis(imageUri : Uri){
+    private fun startImageAnalysis(imageUri : Uri, processingDialog: AlertDialog){
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener(Runnable {
@@ -55,7 +66,7 @@ class DisplayFragment : Fragment() {
             imageAnalyzer = ImageAnalysis.Builder()
                 .build()
                 .also {
-                    it.setAnalyzer(cameraExecutor, TextImageAnalyzer(imageUri))
+                    it.setAnalyzer(cameraExecutor, TextImageAnalyzer(imageUri, processingDialog))
                 }
 
             // Select back camera
@@ -76,38 +87,32 @@ class DisplayFragment : Fragment() {
     }
 
     private fun processTextBlock(result: FirebaseVisionText) {
-        // [START mlkit_process_text_block]
-        val resultText = result.text
-        Log.d("Hello", "Hello text $resultText")
+        var resultText: String
+        val linkList = ArrayList<Link>()
         for (block in result.textBlocks) {
-            val blockText = block.text
-            val blockConfidence = block.confidence
-            val blockLanguages = block.recognizedLanguages
-            val blockCornerPoints = block.cornerPoints
-            val blockFrame = block.boundingBox
             for (line in block.lines) {
-                val lineText = line.text
-                val lineConfidence = line.confidence
-                val lineLanguages = line.recognizedLanguages
-                val lineCornerPoints = line.cornerPoints
-                val lineFrame = line.boundingBox
                 for (element in line.elements) {
                     val elementText = element.text
-                    val elementConfidence = element.confidence
-                    val elementLanguages = element.recognizedLanguages
-                    val elementCornerPoints = element.cornerPoints
-                    val elementFrame = element.boundingBox
+
+                    val pattern = "^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}$".toRegex()
+                    if (pattern.matches(elementText)) {
+                        resultText = elementText
+                        if (!resultText.startsWith("https://") && !resultText.startsWith("http://")){
+                            resultText = "http://$resultText"
+                        }
+                        linkList.add(Link(linkString = resultText))
+                    }
                 }
             }
+
         }
-        viewModel.passLinkData(resultText)
+
+        viewModel.passLinkData(linkList)
         findNavController().navigate(R.id.action_displayFragment_to_actionDialogFragment)
     }
 
-    private inner class TextImageAnalyzer(private val uri: Uri) : ImageAnalysis.Analyzer {
-        //val rotation = getRotationCompensation(CameraSelector.LENS_FACING_BACK, activity!!, requireContext())
+    private inner class TextImageAnalyzer(private val uri: Uri, private val dialog: AlertDialog) : ImageAnalysis.Analyzer {
         override fun analyze(imageProxy: ImageProxy) {
-            Log.d("Hello", "Hello in image analyzer")
             val mediaImage = imageProxy.image
             if (mediaImage != null) {
                 val image = FirebaseVisionImage.fromFilePath(requireContext(), uri)
@@ -115,10 +120,13 @@ class DisplayFragment : Fragment() {
                     .onDeviceTextRecognizer
                 detector.processImage(image)
                     .addOnSuccessListener {firebaseVisionText->
+                        dialog.dismiss()
                         processTextBlock(firebaseVisionText)
                     }
                     .addOnFailureListener {
                         Log.d(CaptureFragment.TAG, "Exception thrown: ${it.message}")
+                        dialog.dismiss()
+                        Toast.makeText(requireContext(), "Image analysis failed!", Toast.LENGTH_LONG).show()
                     }
 
             }

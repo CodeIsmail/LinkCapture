@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:defaultValue="false"
+    app:defaultValue="false">
+    <SwitchPreference
+        android:layout_width="match_parent"
+        android:defaultValue="false"
+        android:key="switch_preference_1"
+        android:summary="Url will be saved when you access it"
+        android:title="Save url"
+        app:iconSpaceReserved="false" />
+    <SwitchPreference
+        android:layout_width="match_parent"
+        android:defaultValue="false"
+        android:key="default_access"
+        android:summary="Link will be sent to default browser to display"
+        android:title="Use default brower"
+        app:iconSpaceReserved="false" />
+</androidx.preference.PreferenceScreen>
