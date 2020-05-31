@@ -3,4 +3,5 @@
     <string name="open_link_label">Open</string>
     <string name="cancel_label">Cancel</string>
     <string name="processing_label">Analyzing image for url(s)</string>
+    <string name="last_visit_label">Last visited on %s</string>
 </resources>

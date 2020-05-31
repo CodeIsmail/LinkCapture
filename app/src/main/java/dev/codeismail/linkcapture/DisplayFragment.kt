@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
@@ -22,6 +23,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import dev.codeismail.linkcapture.adapter.Link
 import kotlinx.android.synthetic.main.fragment_display.*
+import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -94,7 +96,7 @@ class DisplayFragment : Fragment() {
                 for (element in line.elements) {
                     val elementText = element.text
 
-                    val pattern = "^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}$".toRegex()
+                    val pattern = "^((http:/{2})|(HTTP:/{2}))?((https:/{2})|(HTTPS:/{2}))?((w{3}.)|(W{3}.))?[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}(/?[a-zA-Z0-9]*-*)+$".toRegex()
                     if (pattern.matches(elementText)) {
                         resultText = elementText
                         if (!resultText.startsWith("https://") && !resultText.startsWith("http://")){
@@ -107,8 +109,13 @@ class DisplayFragment : Fragment() {
 
         }
 
-        viewModel.passLinkData(linkList)
-        findNavController().navigate(R.id.action_displayFragment_to_actionDialogFragment)
+        if (linkList.isNotEmpty()){
+            viewModel.passLinkData(linkList)
+            findNavController().navigate(R.id.action_displayFragment_to_actionDialogFragment)
+        }else{
+            Toast.makeText(requireContext(), "No url found!", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     private inner class TextImageAnalyzer(private val uri: Uri, private val dialog: AlertDialog) : ImageAnalysis.Analyzer {
@@ -122,6 +129,10 @@ class DisplayFragment : Fragment() {
                     .addOnSuccessListener {firebaseVisionText->
                         dialog.dismiss()
                         processTextBlock(firebaseVisionText)
+                        if (uri.toFile().exists()
+                            && uri.toFile().absolutePath.contains(resources.getString(R.string.app_name), true)){
+                            uri.toFile().delete()
+                        }
                     }
                     .addOnFailureListener {
                         Log.d(CaptureFragment.TAG, "Exception thrown: ${it.message}")
@@ -133,5 +144,6 @@ class DisplayFragment : Fragment() {
         }
     }
     companion object {
+        val TAG = DisplayFragment::class.java.simpleName
     }
 }

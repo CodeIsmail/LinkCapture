@@ -29,30 +29,21 @@ class CaptureFragment : Fragment() {
 
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
-    private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
 
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+
+    private val viewModel: SharedViewModel by activityViewModels()
 
 
     companion object {
         fun newInstance() = CaptureFragment()
         val TAG = CaptureFragment::class.java.simpleName
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private val MY_CAMERA_ID = "mad_oo"
-
-        private val ORIENTATIONS = SparseIntArray()
-
-        init {
-            ORIENTATIONS.append(Surface.ROTATION_0, 90)
-            ORIENTATIONS.append(Surface.ROTATION_90, 0)
-            ORIENTATIONS.append(Surface.ROTATION_180, 270)
-            ORIENTATIONS.append(Surface.ROTATION_270, 180)
-        }
     }
 
-    private val viewModel: SharedViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,11 +64,20 @@ class CaptureFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         captureBtn.setOnClickListener {
-            takePhoto()
+            // Create timestamped output file to hold the image
+            val photoFile = File(
+                outputDirectory,
+                SimpleDateFormat(FILENAME_FORMAT, Locale.US
+                ).format(System.currentTimeMillis()) + ".jpg")
+            takePhoto(photoFile)
 
         }
         settingBtn.setOnClickListener {
             findNavController().navigate(R.id.action_captureFragment_to_settingFragment)
+        }
+
+        historyBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_captureFragment_to_historyFragment)
         }
     }
 
@@ -149,15 +149,9 @@ class CaptureFragment : Fragment() {
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
-    private fun takePhoto() {
+    private fun takePhoto(photoFile: File) {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
-
-        // Create timestamped output file to hold the image
-        val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat(FILENAME_FORMAT, Locale.US
-            ).format(System.currentTimeMillis()) + ".jpg")
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
@@ -174,7 +168,6 @@ class CaptureFragment : Fragment() {
                     val savedUri = Uri.fromFile(photoFile)
                     viewModel.passImageData(savedUri)
                     val msg = "Photo capture succeeded: $savedUri"
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
                     findNavController().navigate(R.id.action_captureFragment_to_displayFragment)
                 }
@@ -182,49 +175,6 @@ class CaptureFragment : Fragment() {
 
     }
 
-    /**
-     * Get the angle by which an image must be rotated given the device's current
-     * orientation.
-     */
-    /*@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Throws(CameraAccessException::class)
-    private fun getRotationCompensation(cameraId: String, activity: Activity, context: Context): Int {
-        // Get the device's current rotation relative to its "native" orientation.
-        // Then, from the ORIENTATIONS table, look up the angle the image must be
-        // rotated to compensate for the device's rotation.
-        val deviceRotation = activity.windowManager.defaultDisplay.rotation
-        var rotationCompensation = ORIENTATIONS.get(deviceRotation)
-
-        // On most devices, the sensor orientation is 90 degrees, but for some
-        // devices it is 270 degrees. For devices with a sensor orientation of
-        // 270, rotate the image an additional 180 ((270 + 270) % 360) degrees.
-        val cameraManager = context.getSystemService(CAMERA_SERVICE) as CameraManager
-        val sensorOrientation = cameraManager
-            .getCameraCharacteristics(cameraId)
-            .get(CameraCharacteristics.SENSOR_ORIENTATION)!!
-        rotationCompensation = (rotationCompensation + sensorOrientation + 270) % 360
-
-        // Return the corresponding FirebaseVisionImageMetadata rotation value.
-        val result: Int
-        when (rotationCompensation) {
-            0 -> result = FirebaseVisionImageMetadata.ROTATION_0
-            90 -> result = FirebaseVisionImageMetadata.ROTATION_90
-            180 -> result = FirebaseVisionImageMetadata.ROTATION_180
-            270 -> result = FirebaseVisionImageMetadata.ROTATION_270
-            else -> {
-                result = FirebaseVisionImageMetadata.ROTATION_0
-                Log.e(TAG, "Bad rotation value: $rotationCompensation")
-            }
-        }
-        return result
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Throws(CameraAccessException::class)
-    private fun getCompensation(activity: Activity, context: Context) {
-        // Get the ID of the camera using CameraManager. Then:
-        val rotation = getRotationCompensation(MY_CAMERA_ID, activity, context)
-    }*/
     private fun getOutputDirectory(): File {
         val mediaDir = requireContext().externalMediaDirs.firstOrNull()?.let {
             File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
