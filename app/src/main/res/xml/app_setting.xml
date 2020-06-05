@@ -6,15 +6,21 @@
     <SwitchPreference
         android:layout_width="match_parent"
         android:defaultValue="false"
-        android:key="switch_preference_1"
+        android:key="@string/key_save_label"
         android:summary="Url will be saved when you access it"
-        android:title="Save url"
+        android:title="@string/title_save_label"
         app:iconSpaceReserved="false" />
     <SwitchPreference
         android:layout_width="match_parent"
         android:defaultValue="false"
-        android:key="default_access"
+        android:key="@string/key_default_label"
         android:summary="Link will be sent to default browser to display"
-        android:title="Use default brower"
+        android:title="@string/title_default_label"
+        app:iconSpaceReserved="false" />
+    <SwitchPreference
+        android:layout_width="match_parent"
+        android:defaultValue="false"
+        android:key="@string/key_dark_theme_label"
+        android:title="@string/title_dark_theme_label"
         app:iconSpaceReserved="false" />
 </androidx.preference.PreferenceScreen>

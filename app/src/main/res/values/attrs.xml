@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomSocialCheckComponent">
+        <attr name="isSocialSelected" format="boolean" />
+        <attr name="socialImage" format="reference" />
+        <attr name="socialName" format="string" />
+    </declare-styleable>
+
+</resources>

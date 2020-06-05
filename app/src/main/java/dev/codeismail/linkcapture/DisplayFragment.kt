@@ -38,7 +38,7 @@ class DisplayFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View?{
+    ): View? {
         return inflater.inflate(R.layout.fragment_display, container, false)
     }
 
@@ -57,7 +57,7 @@ class DisplayFragment : Fragment() {
         })
     }
 
-    private fun startImageAnalysis(imageUri : Uri, processingDialog: AlertDialog){
+    private fun startImageAnalysis(imageUri: Uri, processingDialog: AlertDialog) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener(Runnable {
@@ -72,7 +72,8 @@ class DisplayFragment : Fragment() {
                 }
 
             // Select back camera
-            val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+            val cameraSelector =
+                CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
             try {
                 // Unbind use cases before rebinding
@@ -80,8 +81,9 @@ class DisplayFragment : Fragment() {
 
                 // Bind use cases to camera
                 camera = cameraProvider.bindToLifecycle(
-                    this, cameraSelector, imageAnalyzer)
-            } catch(exc: Exception) {
+                    this, cameraSelector, imageAnalyzer
+                )
+            } catch (exc: Exception) {
                 Log.e(CaptureFragment.TAG, "Use case binding failed", exc)
             }
 
@@ -89,60 +91,83 @@ class DisplayFragment : Fragment() {
     }
 
     private fun processTextBlock(result: FirebaseVisionText) {
-        var resultText: String
         val linkList = ArrayList<Link>()
         for (block in result.textBlocks) {
             for (line in block.lines) {
-                for (element in line.elements) {
-                    val elementText = element.text
 
-                    val pattern = "^((http:/{2})|(HTTP:/{2}))?((https:/{2})|(HTTPS:/{2}))?((w{3}.)|(W{3}.))?[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}(/?[a-zA-Z0-9]*-*)+$".toRegex()
-                    if (pattern.matches(elementText)) {
-                        resultText = elementText
-                        if (!resultText.startsWith("https://") && !resultText.startsWith("http://")){
+                linkList.addAll(line.elements.filter { element ->
+
+                    val pattern: Regex = if (element.text.startsWith("@")){
+                        "^[@][a-zA-Z0-9_.]+$".toRegex()
+                    }else{
+                        "^((http:/{2})|(HTTP:/{2}))?((https:/{2})|(HTTPS:/{2}))?((w{3}.)|(W{3}.))?[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}(/?[a-zA-Z0-9]*-*)+$".toRegex()
+                    }
+                    pattern.matches(element.text)
+                }.map { element ->
+                    var resultText = element.text
+                    if(!resultText.startsWith("@")){
+                        if (!resultText.startsWith("https://") && !resultText.startsWith("http://")) {
                             resultText = "http://$resultText"
                         }
-                        linkList.add(Link(linkString = resultText))
                     }
-                }
+                    Link(linkString = resultText)
+                })
+
             }
 
         }
 
-        if (linkList.isNotEmpty()){
+        if (linkList.isNotEmpty()) {
+            val size = linkList.filter { link ->
+                link.linkString.startsWith("@")
+            }.size
             viewModel.passLinkData(linkList)
-            findNavController().navigate(R.id.action_displayFragment_to_actionDialogFragment)
-        }else{
+            if (size != 0){
+                findNavController().navigate(R.id.action_displayFragment_to_socialFragment)
+            }else{
+                findNavController().navigate(R.id.action_displayFragment_to_actionDialogFragment)
+            }
+        } else {
             Toast.makeText(requireContext(), "No url found!", Toast.LENGTH_LONG).show()
         }
 
     }
 
-    private inner class TextImageAnalyzer(private val uri: Uri, private val dialog: AlertDialog) : ImageAnalysis.Analyzer {
+    private inner class TextImageAnalyzer(private val uri: Uri, private val dialog: AlertDialog) :
+        ImageAnalysis.Analyzer {
         override fun analyze(imageProxy: ImageProxy) {
             val mediaImage = imageProxy.image
             if (mediaImage != null) {
                 val image = FirebaseVisionImage.fromFilePath(requireContext(), uri)
                 val detector = FirebaseVision.getInstance()
-                    .onDeviceTextRecognizer
+                    .cloudTextRecognizer
                 detector.processImage(image)
-                    .addOnSuccessListener {firebaseVisionText->
+                    .addOnSuccessListener { firebaseVisionText ->
                         dialog.dismiss()
                         processTextBlock(firebaseVisionText)
                         if (uri.toFile().exists()
-                            && uri.toFile().absolutePath.contains(resources.getString(R.string.app_name), true)){
+                            && uri.toFile().absolutePath.contains(
+                                resources.getString(R.string.app_name),
+                                true
+                            )
+                        ) {
                             uri.toFile().delete()
                         }
                     }
                     .addOnFailureListener {
                         Log.d(CaptureFragment.TAG, "Exception thrown: ${it.message}")
                         dialog.dismiss()
-                        Toast.makeText(requireContext(), "Image analysis failed!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Image analysis failed!",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
             }
         }
     }
+
     companion object {
         val TAG = DisplayFragment::class.java.simpleName
     }

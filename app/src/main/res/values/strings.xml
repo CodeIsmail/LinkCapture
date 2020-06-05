@@ -2,6 +2,13 @@
     <string name="app_name">LinkCapture</string>
     <string name="open_link_label">Open</string>
     <string name="cancel_label">Cancel</string>
-    <string name="processing_label">Analyzing image for url(s)</string>
+    <string name="processing_label">Analyzing image</string>
     <string name="last_visit_label">Last visited on %s</string>
+    <string name="key_save_label">key_save_option</string>
+    <string name="title_save_label">Save url</string>
+    <string name="key_default_label">key_default_browser</string>
+    <string name="title_default_label">Use default browser</string>
+    <string name="key_dark_theme_label">key_dark_theme</string>
+    <string name="title_dark_theme_label">Dark theme</string>
+    <string name="done_btn_label">Done</string>
 </resources>

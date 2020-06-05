@@ -1,13 +1,16 @@
 package dev.codeismail.linkcapture
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -24,6 +27,7 @@ class ActionDialogFragment : BottomSheetDialogFragment() {
     private val dbViewModel: HistoryViewModel by activityViewModels {
         HistoryFactory(AppDatabase.getInstance(requireContext()).linkDao())
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,6 +38,8 @@ class ActionDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val sharedPreference = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val shouldSave = sharedPreference.getBoolean(getString(R.string.key_save_label), false)
         val linkAdapter = LinkAdapter()
         linkRv.apply {
             adapter = linkAdapter
@@ -42,22 +48,35 @@ class ActionDialogFragment : BottomSheetDialogFragment() {
         }
         viewModel.getLinks().observe(viewLifecycleOwner, Observer {
             linkAdapter.submitList(it)
+            if (shouldSave) {
+                dbViewModel.saveLink(
+                    it.map { link ->
+                        DbLink(
+                            link.id,
+                            link.linkString,
+                            "-"
+                        )
+                    })
+            }
 
         })
         cancelBtn.setOnClickListener {
             dialog?.dismiss()
         }
 
-        linkAdapter.setOnItemClickListener {position ->
+        linkAdapter.setOnItemClickListener { position ->
             val current = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
             val formattedDate = current.format(formatter)
             dbViewModel.saveLink(
-                listOf(DbLink(
-                    linkAdapter.getItem(position).id,
-                    linkAdapter.getItem(position).linkString,
-                    formattedDate
-                )))
+                listOf(
+                    DbLink(
+                        linkAdapter.getItem(position).id,
+                        linkAdapter.getItem(position).linkString,
+                        formattedDate
+                    )
+                )
+            )
             startActivity(Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(linkAdapter.getItem(position).linkString)
             })

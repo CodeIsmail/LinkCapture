@@ -1,5 +1,7 @@
 package dev.codeismail.linkcapture
 
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,7 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.codeismail.linkcapture.adapter.LinkHistoryAdapter
 import dev.codeismail.linkcapture.data.AppDatabase
+import dev.codeismail.linkcapture.data.DbLink
 import kotlinx.android.synthetic.main.history_fragment.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class HistoryFragment : Fragment() {
 
@@ -43,6 +48,23 @@ class HistoryFragment : Fragment() {
             linkHistoryAdapter.submitList(it)
         })
 
+        linkHistoryAdapter.setOnItemClickListener { position ->
+            val current = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val formattedDate = current.format(formatter)
+            dbViewModel.saveLink(
+                listOf(
+                    DbLink(
+                        linkHistoryAdapter.getItem(position).id,
+                        linkHistoryAdapter.getItem(position).linkString,
+                        formattedDate
+                    )
+                )
+            )
+            startActivity(Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(linkHistoryAdapter.getItem(position).linkString)
+            })
+        }
     }
 
 }

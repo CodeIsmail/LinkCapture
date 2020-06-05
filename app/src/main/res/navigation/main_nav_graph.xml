@@ -31,9 +31,11 @@
         android:label="fragment_display"
         tools:layout="@layout/fragment_display" >
         <action
+            android:id="@+id/action_displayFragment_to_socialFragment"
+            app:destination="@id/socialFragment" />
+        <action
             android:id="@+id/action_displayFragment_to_actionDialogFragment"
-            app:destination="@id/actionDialogFragment"
-            app:popUpTo="@id/displayFragment" />
+            app:destination="@id/actionDialogFragment" />
     </fragment>
     <dialog
         android:id="@+id/actionDialogFragment"
@@ -45,4 +47,13 @@
         android:name="dev.codeismail.linkcapture.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" />
+    <dialog
+        android:id="@+id/socialFragment"
+        android:name="dev.codeismail.linkcapture.SocialFragment"
+        android:label="fragment_social"
+        tools:layout="@layout/fragment_social" >
+        <action
+            android:id="@+id/action_socialFragment_to_actionDialogFragment"
+            app:destination="@id/actionDialogFragment" />
+    </dialog>
 </navigation>

@@ -17,6 +17,9 @@ class SharedViewModel : ViewModel() {
         link.value = links
     }
 
+    fun passLinkDataFromIO(links: List<Link>){
+        link.postValue(links)
+    }
     fun getLinks(): LiveData<List<Link>> = link
 
     fun passImageData(uri: Uri){

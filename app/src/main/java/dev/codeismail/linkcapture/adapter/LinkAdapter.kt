@@ -1,5 +1,6 @@
 package dev.codeismail.linkcapture.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,7 +58,7 @@ class LinkAdapter : ListAdapter<Link, LinkAdapter.ViewHolder>(
 
         fun bind(item: Link) {
             item.run {
-                 containerView.linkTv.text = item.linkString
+                 containerView.linkTv.text = linkString
             }
         }
 
