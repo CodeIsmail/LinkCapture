@@ -11,23 +11,34 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import dev.codeismail.linkcapture.utils.ThemeManager
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.app_setting, rootKey)
+
+    }
+    override fun onResume() {
+        super.onResume()
         preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun onPause() {
+        super.onPause()
+        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         if (key.equals(getString(R.string.key_dark_theme_label), true)) {
-            setAppToDarkTheme()
+            val switchValue = (findPreference(key) as SwitchPreference?)!!.isChecked
+            sharedPreferences.edit(true) {
+                putBoolean(key, switchValue)
+            }
+            setAppToDarkTheme(switchValue)
         } else if (key.equals(getString(R.string.key_save_label), true)) {
             val switchValue = (findPreference(key) as SwitchPreference?)!!.isChecked
             sharedPreferences.edit(true) {
@@ -36,13 +47,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat(),
         }
     }
 
-    private fun setAppToDarkTheme() {
-        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES ->
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            Configuration.UI_MODE_NIGHT_NO ->
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
+    private fun setAppToDarkTheme(enableDarkTheme : Boolean) {
+        ThemeManager.applyTheme(enableDarkTheme)
     }
 
 }

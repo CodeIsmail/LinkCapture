@@ -15,5 +15,7 @@ interface LinkDao{
 
     @Query("SELECT * FROM link")
     fun getLinks(): Flow<List<DbLink>>
+    @Query("SELECT * FROM link WHERE linkString LIKE :query")
+    fun search(query: String): Flow<List<DbLink>>
 
 }

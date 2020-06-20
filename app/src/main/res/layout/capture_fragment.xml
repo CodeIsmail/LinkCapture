@@ -30,6 +30,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <CheckBox
+        android:id="@+id/flashBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:includeFontPadding="false"
+        android:button="@drawable/checkbox_state_flash"
+        android:gravity="center|end"
+        app:layout_constraintEnd_toEndOf="@+id/captureBtn"
+        app:layout_constraintStart_toStartOf="@+id/captureBtn"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageButton
         android:id="@+id/previewBtn"
         android:layout_width="wrap_content"

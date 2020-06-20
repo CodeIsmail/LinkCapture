@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.util.SparseIntArray
 import android.view.*
 import android.widget.Toast
 import androidx.camera.core.*
@@ -20,6 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 
 private const val REQUEST_CODE_PERMISSIONS = 10
 
@@ -79,6 +79,16 @@ class CaptureFragment : Fragment() {
         historyBtn.setOnClickListener {
             findNavController().navigate(R.id.action_captureFragment_to_historyFragment)
         }
+
+        flashBtn.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                Log.d("Hello", "Hello $isChecked")
+                imageCapture?.flashMode = ImageCapture.FLASH_MODE_ON
+            }else{
+                Log.d("Hello", "Hello $isChecked")
+                imageCapture?.flashMode = ImageCapture.FLASH_MODE_OFF
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -113,7 +123,6 @@ class CaptureFragment : Fragment() {
                 .build()
             //Image Capture
             imageCapture = ImageCapture.Builder()
-                .setFlashMode(ImageCapture.FLASH_MODE_AUTO)
                 .build()
 
             val orientationEventListener = object : OrientationEventListener(requireContext()) {
@@ -141,12 +150,48 @@ class CaptureFragment : Fragment() {
                 // Bind use cases to camera
                 camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture)
+                applyTapToFocus()
+                setUpPinchToZoom()
                 preview?.setSurfaceProvider(viewFinder.createSurfaceProvider(camera?.cameraInfo))
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun applyTapToFocus(){
+        viewFinder.setOnTouchListener { view, event ->
+            if (event.action != MotionEvent.ACTION_UP) {
+                return@setOnTouchListener false
+            }
+            val meteringPoint = SurfaceOrientedMeteringPointFactory(
+                view.width.toFloat(),
+                view.height.toFloat()
+            ).createPoint(event.x, event.y)
+            Log.d("Hello", "Hello, Action Up")
+            val action = FocusMeteringAction.Builder(meteringPoint).build()
+            camera!!.cameraControl.startFocusAndMetering(action)
+            return@setOnTouchListener true
+        }
+    }
+
+    private fun setUpPinchToZoom() {
+        val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                val currentZoomRatio: Float = camera!!.cameraInfo.zoomState.value?.zoomRatio ?: 0F
+                val delta = detector.scaleFactor
+                camera!!.cameraControl.setZoomRatio(currentZoomRatio * delta)
+                return true
+            }
+        }
+
+        val scaleGestureDetector = ScaleGestureDetector(context, listener)
+
+        viewFinder.setOnTouchListener { _, event ->
+            scaleGestureDetector.onTouchEvent(event)
+            return@setOnTouchListener true
+        }
     }
 
     private fun takePhoto(photoFile: File) {

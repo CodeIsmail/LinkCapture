@@ -14,7 +14,13 @@ class HistoryViewModel(private val linkDao: LinkDao) : ViewModel() {
         }
     }
 
-    fun getSavedLink(): LiveData<List<Link>> = linkDao.getLinks().asLiveData().map {
+    val savedLinks: LiveData<List<Link>> = linkDao.getLinks().asLiveData().map {
+        it.map {dbLink ->
+            Link(dbLink.id, dbLink.linkString, dbLink.lastVisit)
+        }
+    }
+
+    fun searchUrl(query: String): LiveData<List<Link>> = linkDao.search(query).asLiveData().map {
         it.map {dbLink ->
             Link(dbLink.id, dbLink.linkString, dbLink.lastVisit)
         }

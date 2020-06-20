@@ -94,13 +94,11 @@ class DisplayFragment : Fragment() {
         val linkList = ArrayList<Link>()
         for (block in result.textBlocks) {
             for (line in block.lines) {
-
                 linkList.addAll(line.elements.filter { element ->
-
                     val pattern: Regex = if (element.text.startsWith("@")){
                         "^[@][a-zA-Z0-9_.]+$".toRegex()
                     }else{
-                        "^((http:/{2})|(HTTP:/{2}))?((https:/{2})|(HTTPS:/{2}))?((w{3}.)|(W{3}.))?[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}(/?[a-zA-Z0-9]*-*)+$".toRegex()
+                        "^((http:/{2})|(HTTP:/{2}))?((https:/{2})|(HTTPS:/{2}))?((w{3}.)|(W{3}.))?([a-zA-Z0-9]*[.])*[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}(/[a-zA-Z0-9]*.*-*)*$".toRegex()
                     }
                     pattern.matches(element.text)
                 }.map { element ->
@@ -145,14 +143,6 @@ class DisplayFragment : Fragment() {
                     .addOnSuccessListener { firebaseVisionText ->
                         dialog.dismiss()
                         processTextBlock(firebaseVisionText)
-                        if (uri.toFile().exists()
-                            && uri.toFile().absolutePath.contains(
-                                resources.getString(R.string.app_name),
-                                true
-                            )
-                        ) {
-                            uri.toFile().delete()
-                        }
                     }
                     .addOnFailureListener {
                         Log.d(CaptureFragment.TAG, "Exception thrown: ${it.message}")

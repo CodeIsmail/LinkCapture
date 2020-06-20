@@ -3,7 +3,6 @@ package dev.codeismail.linkcapture.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -58,7 +57,7 @@ class LinkHistoryAdapter : ListAdapter<Link, LinkHistoryAdapter.ViewHolder>(
         fun bind(item: Link) {
             item.run {
                 containerView.urlTextView.text = item.linkString
-                containerView.dateTextView.text = item.lastVisit
+                containerView.dateTextView.text = if (item.lastVisit == "-") "" else containerView.context.getString(R.string.last_visit_label, item.lastVisit)
             }
         }
 

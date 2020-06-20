@@ -39,9 +39,6 @@ class CustomSocialCheckComponent @JvmOverloads constructor(
         socialText.text = socialName
         socialIcon.setImageDrawable(socialImage)
         socialCheck.isChecked = isSocialSelected
-        socialCheck.setOnCheckedChangeListener { compoundButton: CompoundButton, state: Boolean ->
-
-        }
     }
 
     fun setCheckState(state : Boolean){

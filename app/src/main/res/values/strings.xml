@@ -11,4 +11,6 @@
     <string name="key_dark_theme_label">key_dark_theme</string>
     <string name="title_dark_theme_label">Dark theme</string>
     <string name="done_btn_label">Done</string>
+    <string name="history_title">History</string>
+    <string name="settings_title">Settings</string>
 </resources>

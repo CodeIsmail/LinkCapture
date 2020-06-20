@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2a75b7</color>
-    <color name="colorPrimaryLight">#66a3ea</color>
-    <color name="colorPrimaryDark">#004a87</color>
-    <color name="colorSecondary">#19808c</color>
-    <color name="colorSecondaryLight">#56b0bc</color>
-    <color name="colorSecondaryDark">#00535f</color>
-    <color name="colorOnPrimary">#ffffff</color>
-    <color name="colorOnSecondary">#ffffff</color>
-    <color name="colorAsh">#FFA6A6A6</color>
+    <color name="light_blue_600">#2a75b7</color>
+    <color name="light_blue_700">#1765AA</color>
+    <color name="light_blue_300">#66a3ea</color>
+    <color name="light_blue_900">#004A87</color>
+    <color name="teal_600">#19808c</color>
+    <color name="teal_300">#56b0bc</color>
+    <color name="teal_900">#00535f</color>
+    <color name="gray_300">#FFA6A6A6</color>
+    <color name="red_200">#cf6679</color> <!--Color error (dark)-->
+    <color name="red_600">#b00020</color> <!--Color error (light)-->
+    <color name="white_50">#ffffff</color>
+    <color name="black_800">#121212</color>
+    <color name="black_900">#000000</color>
 </resources>
