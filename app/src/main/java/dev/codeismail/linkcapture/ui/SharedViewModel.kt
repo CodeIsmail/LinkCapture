@@ -1,4 +1,4 @@
-package dev.codeismail.linkcapture
+package dev.codeismail.linkcapture.ui
 
 import android.net.Uri
 import androidx.camera.core.ImageProxy

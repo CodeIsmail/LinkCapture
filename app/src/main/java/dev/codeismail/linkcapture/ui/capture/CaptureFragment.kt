@@ -1,4 +1,4 @@
-package dev.codeismail.linkcapture
+package dev.codeismail.linkcapture.ui.capture
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -13,6 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import dev.codeismail.linkcapture.R
+import dev.codeismail.linkcapture.ui.SharedViewModel
 import kotlinx.android.synthetic.main.capture_fragment.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -38,7 +40,8 @@ class CaptureFragment : Fragment() {
 
 
     companion object {
-        fun newInstance() = CaptureFragment()
+        fun newInstance() =
+            CaptureFragment()
         val TAG = CaptureFragment::class.java.simpleName
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
@@ -58,7 +61,10 @@ class CaptureFragment : Fragment() {
         if (allPermissionsGranted()) {
             startCamera()
         } else {
-            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+            requestPermissions(
+                REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSIONS
+            )
         }
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -67,7 +73,8 @@ class CaptureFragment : Fragment() {
             // Create timestamped output file to hold the image
             val photoFile = File(
                 outputDirectory,
-                SimpleDateFormat(FILENAME_FORMAT, Locale.US
+                SimpleDateFormat(
+                    FILENAME_FORMAT, Locale.US
                 ).format(System.currentTimeMillis()) + ".jpg")
             takePhoto(photoFile)
 

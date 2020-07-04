@@ -1,8 +1,6 @@
-package dev.codeismail.linkcapture
+package dev.codeismail.linkcapture.ui.dialog
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import androidx.viewpager2.widget.ViewPager2.ORIENTATION_VERTICAL
+import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.adapter.Link
 import dev.codeismail.linkcapture.adapter.SocialAdapter
+import dev.codeismail.linkcapture.ui.SharedViewModel
 import dev.codeismail.linkcapture.utils.CustomSocialCheckComponent
 import kotlinx.android.synthetic.main.fragment_social.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -61,8 +60,8 @@ class SocialFragment : DialogFragment() {
             socialAdapter.data = it.filter { link -> link.linkString.startsWith("@") }
             tempList = it.filter { link -> !link.linkString.startsWith("@") }.toMutableList()
         })
-        socialAdapter.setOnItemClickListener { position, view ->
-            when(view.id){
+        socialAdapter.setOnItemClickListener { position, viewItem ->
+            when(viewItem.id){
                 R.id.twitterComponent -> {
                     val link = socialAdapter.data[position]
                     if ((view as CustomSocialCheckComponent).getCheckState()){

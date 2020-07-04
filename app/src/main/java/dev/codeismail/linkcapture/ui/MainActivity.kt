@@ -1,8 +1,8 @@
-package dev.codeismail.linkcapture
+package dev.codeismail.linkcapture.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
+import dev.codeismail.linkcapture.R
 
 class MainActivity : AppCompatActivity() {
 

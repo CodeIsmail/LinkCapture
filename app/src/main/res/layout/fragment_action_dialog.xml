@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:maxHeight="350dp"
-    tools:context=".ActionDialogFragment">
+    tools:context=".ui.dialog.ActionDialogFragment">
 
     <View
         android:id="@+id/view"
@@ -20,15 +20,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:maxHeight="150dp"
+        android:maxHeight="100dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/cancelBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:itemCount="4"
+        tools:itemCount="5"
         tools:listitem="@layout/layout_link_list_item" />
 
 

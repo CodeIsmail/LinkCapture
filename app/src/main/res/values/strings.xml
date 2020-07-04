@@ -13,4 +13,6 @@
     <string name="done_btn_label">Done</string>
     <string name="history_title">History</string>
     <string name="settings_title">Settings</string>
+    <string name="empty_list_message">No urls saved</string>
+    <string name="search_empty_list_message">No results found</string>
 </resources>

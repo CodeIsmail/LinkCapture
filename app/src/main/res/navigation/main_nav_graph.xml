@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/captureFragment"
-        android:name="dev.codeismail.linkcapture.CaptureFragment"
+        android:name="dev.codeismail.linkcapture.ui.capture.CaptureFragment"
         android:label="capture_fragment"
         tools:layout="@layout/capture_fragment" >
         <action
@@ -22,12 +22,12 @@
     </fragment>
     <fragment
         android:id="@+id/historyFragment"
-        android:name="dev.codeismail.linkcapture.HistoryFragment"
+        android:name="dev.codeismail.linkcapture.ui.history.HistoryFragment"
         android:label="@string/history_title"
         tools:layout="@layout/history_fragment" />
     <fragment
         android:id="@+id/displayFragment"
-        android:name="dev.codeismail.linkcapture.DisplayFragment"
+        android:name="dev.codeismail.linkcapture.ui.analysis.AnalysisFragment"
         android:label="fragment_display"
         tools:layout="@layout/fragment_display" >
         <action
@@ -39,17 +39,17 @@
     </fragment>
     <dialog
         android:id="@+id/actionDialogFragment"
-        android:name="dev.codeismail.linkcapture.ActionDialogFragment"
+        android:name="dev.codeismail.linkcapture.ui.dialog.ActionDialogFragment"
         android:label="fragment_action_dialog"
         tools:layout="@layout/fragment_action_dialog" />
     <fragment
         android:id="@+id/settingFragment"
-        android:name="dev.codeismail.linkcapture.SettingFragment"
+        android:name="dev.codeismail.linkcapture.ui.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" />
     <dialog
         android:id="@+id/socialFragment"
-        android:name="dev.codeismail.linkcapture.SocialFragment"
+        android:name="dev.codeismail.linkcapture.ui.dialog.SocialFragment"
         android:label="fragment_social"
         tools:layout="@layout/fragment_social" >
         <action

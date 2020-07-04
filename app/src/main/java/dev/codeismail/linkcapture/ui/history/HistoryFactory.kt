@@ -1,4 +1,4 @@
-package dev.codeismail.linkcapture
+package dev.codeismail.linkcapture.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

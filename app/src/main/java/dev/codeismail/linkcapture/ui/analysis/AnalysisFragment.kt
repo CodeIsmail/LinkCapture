@@ -1,17 +1,20 @@
-package dev.codeismail.linkcapture
+package dev.codeismail.linkcapture.ui.analysis
 
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.*
-import androidx.fragment.app.Fragment
-import android.widget.ImageView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.camera.core.*
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.net.toFile
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
@@ -21,18 +24,25 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer
+import dev.codeismail.linkcapture.R
+import dev.codeismail.linkcapture.ui.SharedViewModel
 import dev.codeismail.linkcapture.adapter.Link
+import dev.codeismail.linkcapture.ui.capture.CaptureFragment
+import dev.codeismail.linkcapture.utils.Manager
+import dev.codeismail.linkcapture.utils.NetworkResult
 import kotlinx.android.synthetic.main.fragment_display.*
-import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class DisplayFragment : Fragment() {
+class AnalysisFragment : Fragment() {
 
+    private lateinit var networkState: NetworkResult
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private lateinit var cameraExecutor: ExecutorService
     private val viewModel: SharedViewModel by activityViewModels()
+    private val networkManager by lazy { Manager(requireContext()) }
 
 
     override fun onCreateView(
@@ -44,10 +54,15 @@ class DisplayFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        networkManager.result.observe(viewLifecycleOwner, Observer {
+            Log.d("Hello", "Value Set ${it.name}")
+            networkState = it
+        })
         cameraExecutor = Executors.newSingleThreadExecutor()
         backBtn.setOnClickListener {
-            Navigation.findNavController(requireActivity(), R.id.host_fragment).navigateUp()
+            Navigation.findNavController(requireActivity(),
+                R.id.host_fragment
+            ).navigateUp()
         }
         viewModel.getImageUri().observe(viewLifecycleOwner, Observer {
             imageDisplay.load(it)
@@ -57,6 +72,15 @@ class DisplayFragment : Fragment() {
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+        networkManager.registerCallback()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        networkManager.unregisterCallback()
+    }
     private fun startImageAnalysis(imageUri: Uri, processingDialog: AlertDialog) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
@@ -137,8 +161,15 @@ class DisplayFragment : Fragment() {
             val mediaImage = imageProxy.image
             if (mediaImage != null) {
                 val image = FirebaseVisionImage.fromFilePath(requireContext(), uri)
-                val detector = FirebaseVision.getInstance()
-                    .cloudTextRecognizer
+                val detector: FirebaseVisionTextRecognizer = if (networkState == NetworkResult.CONNECTED ){
+                    Log.d("Hello", "Using on device")
+                    FirebaseVision.getInstance()
+                        .onDeviceTextRecognizer
+                }else{
+                    Log.d("Hello", "Using cloud")
+                    FirebaseVision.getInstance()
+                        .cloudTextRecognizer
+                }
                 detector.processImage(image)
                     .addOnSuccessListener { firebaseVisionText ->
                         dialog.dismiss()
@@ -159,6 +190,6 @@ class DisplayFragment : Fragment() {
     }
 
     companion object {
-        val TAG = DisplayFragment::class.java.simpleName
+        val TAG = AnalysisFragment::class.java.simpleName
     }
 }

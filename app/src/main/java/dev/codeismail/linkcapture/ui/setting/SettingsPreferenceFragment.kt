@@ -1,19 +1,11 @@
-package dev.codeismail.linkcapture
+package dev.codeismail.linkcapture.ui.setting
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.utils.ThemeManager
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat(),

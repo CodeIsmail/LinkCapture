@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingFragment"
+    tools:context=".ui.setting.SettingFragment"
     android:name="dev.codeismail.linkcapture.SettingsPreferenceFragment">
 
     <androidx.appcompat.widget.Toolbar
@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="dev.codeismail.linkcapture.SettingsPreferenceFragment"
+        android:name="dev.codeismail.linkcapture.ui.setting.SettingsPreferenceFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

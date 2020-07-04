@@ -1,4 +1,4 @@
-package dev.codeismail.linkcapture
+package dev.codeismail.linkcapture.ui.setting
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import dev.codeismail.linkcapture.R
 import kotlinx.android.synthetic.main.fragment_setting.*
 
 
@@ -21,8 +22,6 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_close, null)
-//        toolbar.title = getString(R.string.settings_title)
         toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }

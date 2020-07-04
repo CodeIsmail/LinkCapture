@@ -1,10 +1,8 @@
-package dev.codeismail.linkcapture
+package dev.codeismail.linkcapture.ui.dialog
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +12,13 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.adapter.LinkAdapter
 import dev.codeismail.linkcapture.data.AppDatabase
 import dev.codeismail.linkcapture.data.DbLink
+import dev.codeismail.linkcapture.ui.SharedViewModel
+import dev.codeismail.linkcapture.ui.history.HistoryFactory
+import dev.codeismail.linkcapture.ui.history.HistoryViewModel
 import kotlinx.android.synthetic.main.fragment_action_dialog.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -25,7 +27,11 @@ class ActionDialogFragment : BottomSheetDialogFragment() {
 
     private val viewModel: SharedViewModel by activityViewModels()
     private val dbViewModel: HistoryViewModel by activityViewModels {
-        HistoryFactory(AppDatabase.getInstance(requireContext()).linkDao())
+        HistoryFactory(
+            AppDatabase.getInstance(
+                requireContext()
+            ).linkDao()
+        )
     }
 
     override fun onCreateView(
