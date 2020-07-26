@@ -1,14 +1,16 @@
 package dev.codeismail.linkcapture
 
 import android.app.Application
-import android.util.Log
 import androidx.preference.PreferenceManager
+import dagger.hilt.android.HiltAndroidApp
 import dev.codeismail.linkcapture.utils.ThemeManager
 
+@HiltAndroidApp
 class LinkCapture : Application() {
     override fun onCreate() {
         super.onCreate()
         initTheme()
+        //val urlWorkerRequest = PeriodicWorkRequest
     }
 
     private fun initTheme(){

@@ -1,6 +1,7 @@
 package dev.codeismail.linkcapture.ui.capture
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -40,8 +41,6 @@ class CaptureFragment : Fragment() {
 
 
     companion object {
-        fun newInstance() =
-            CaptureFragment()
         val TAG = CaptureFragment::class.java.simpleName
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
@@ -89,10 +88,10 @@ class CaptureFragment : Fragment() {
 
         flashBtn.setOnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
-                Log.d("Hello", "Hello $isChecked")
+                Log.d(TAG, "Hello $isChecked")
                 imageCapture?.flashMode = ImageCapture.FLASH_MODE_ON
             }else{
-                Log.d("Hello", "Hello $isChecked")
+                Log.d(TAG, "Hello $isChecked")
                 imageCapture?.flashMode = ImageCapture.FLASH_MODE_OFF
             }
         }
@@ -113,7 +112,7 @@ class CaptureFragment : Fragment() {
                     "Permissions not granted by the user.",
                     Toast.LENGTH_SHORT
                 ).show()
-                activity!!.finish()
+                requireActivity().finish()
             }
         }
     }
@@ -159,7 +158,7 @@ class CaptureFragment : Fragment() {
                     this, cameraSelector, preview, imageCapture)
                 applyTapToFocus()
                 setUpPinchToZoom()
-                preview?.setSurfaceProvider(viewFinder.createSurfaceProvider(camera?.cameraInfo))
+                preview?.setSurfaceProvider(viewFinder.createSurfaceProvider())
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
@@ -167,6 +166,7 @@ class CaptureFragment : Fragment() {
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun applyTapToFocus(){
         viewFinder.setOnTouchListener { view, event ->
             if (event.action != MotionEvent.ACTION_UP) {
@@ -176,13 +176,13 @@ class CaptureFragment : Fragment() {
                 view.width.toFloat(),
                 view.height.toFloat()
             ).createPoint(event.x, event.y)
-            Log.d("Hello", "Hello, Action Up")
             val action = FocusMeteringAction.Builder(meteringPoint).build()
             camera!!.cameraControl.startFocusAndMetering(action)
             return@setOnTouchListener true
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setUpPinchToZoom() {
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
@@ -219,8 +219,7 @@ class CaptureFragment : Fragment() {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
                     viewModel.passImageData(savedUri)
-                    val msg = "Photo capture succeeded: $savedUri"
-                    Log.d(TAG, msg)
+                    Log.d(TAG, "Photo capture succeeded: $savedUri")
                     findNavController().navigate(R.id.action_captureFragment_to_displayFragment)
                 }
             })
@@ -235,7 +234,7 @@ class CaptureFragment : Fragment() {
     }
     private fun allPermissionsGranted(): Boolean = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-            context!!, it
+            requireContext(), it
         ) == PackageManager.PERMISSION_GRANTED
     }
 }

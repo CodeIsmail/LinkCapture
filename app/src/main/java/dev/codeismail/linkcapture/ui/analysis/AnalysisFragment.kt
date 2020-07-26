@@ -1,5 +1,6 @@
 package dev.codeismail.linkcapture.ui.analysis
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -26,9 +27,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer
 import dev.codeismail.linkcapture.R
-import dev.codeismail.linkcapture.ui.SharedViewModel
 import dev.codeismail.linkcapture.adapter.Link
-import dev.codeismail.linkcapture.ui.capture.CaptureFragment
+import dev.codeismail.linkcapture.ui.SharedViewModel
 import dev.codeismail.linkcapture.utils.Manager
 import dev.codeismail.linkcapture.utils.NetworkResult
 import kotlinx.android.synthetic.main.fragment_display.*
@@ -55,7 +55,7 @@ class AnalysisFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         networkManager.result.observe(viewLifecycleOwner, Observer {
-            Log.d("Hello", "Value Set ${it.name}")
+            Log.d(TAG, "Value Set ${it.name}")
             networkState = it
         })
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -108,7 +108,7 @@ class AnalysisFragment : Fragment() {
                     this, cameraSelector, imageAnalyzer
                 )
             } catch (exc: Exception) {
-                Log.e(CaptureFragment.TAG, "Use case binding failed", exc)
+                Log.e(TAG, "Use case binding failed", exc)
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
@@ -157,16 +157,17 @@ class AnalysisFragment : Fragment() {
 
     private inner class TextImageAnalyzer(private val uri: Uri, private val dialog: AlertDialog) :
         ImageAnalysis.Analyzer {
+        @SuppressLint("UnsafeExperimentalUsageError")
         override fun analyze(imageProxy: ImageProxy) {
             val mediaImage = imageProxy.image
             if (mediaImage != null) {
                 val image = FirebaseVisionImage.fromFilePath(requireContext(), uri)
                 val detector: FirebaseVisionTextRecognizer = if (networkState == NetworkResult.CONNECTED ){
-                    Log.d("Hello", "Using on device")
+                    Log.d(TAG, "Using on device")
                     FirebaseVision.getInstance()
                         .onDeviceTextRecognizer
                 }else{
-                    Log.d("Hello", "Using cloud")
+                    Log.d(TAG, "Using cloud")
                     FirebaseVision.getInstance()
                         .cloudTextRecognizer
                 }
@@ -176,7 +177,7 @@ class AnalysisFragment : Fragment() {
                         processTextBlock(firebaseVisionText)
                     }
                     .addOnFailureListener {
-                        Log.d(CaptureFragment.TAG, "Exception thrown: ${it.message}")
+                        Log.d(TAG, "Exception thrown: ${it.message}")
                         dialog.dismiss()
                         Toast.makeText(
                             requireContext(),

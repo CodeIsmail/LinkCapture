@@ -39,9 +39,9 @@
     </fragment>
     <dialog
         android:id="@+id/actionDialogFragment"
-        android:name="dev.codeismail.linkcapture.ui.dialog.ActionDialogFragment"
+        android:name="dev.codeismail.linkcapture.ui.dialog.FoundLinksBottomSheetFragment"
         android:label="fragment_action_dialog"
-        tools:layout="@layout/fragment_action_dialog" />
+        tools:layout="@layout/fragment_found_links" />
     <fragment
         android:id="@+id/settingFragment"
         android:name="dev.codeismail.linkcapture.ui.setting.SettingFragment"

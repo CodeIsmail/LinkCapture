@@ -2,12 +2,14 @@ package dev.codeismail.linkcapture.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import dev.codeismail.linkcapture.data.LinkDao
+import dagger.hilt.android.AndroidEntryPoint
+import dev.codeismail.linkcapture.data.Repository
+import javax.inject.Inject
 
-class HistoryFactory(private val dao: LinkDao) : ViewModelProvider.Factory {
+class HistoryFactory @Inject constructor(private val repo: Repository) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
-            return HistoryViewModel(dao) as T
+            return HistoryViewModel(repo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

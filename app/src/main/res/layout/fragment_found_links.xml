@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:maxHeight="350dp"
-    tools:context=".ui.dialog.ActionDialogFragment">
+    tools:context=".ui.dialog.FoundLinksBottomSheetFragment">
 
     <View
         android:id="@+id/view"

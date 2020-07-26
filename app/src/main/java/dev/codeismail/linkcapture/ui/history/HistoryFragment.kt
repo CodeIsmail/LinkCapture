@@ -13,38 +13,35 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import dev.codeismail.linkcapture.ui.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.adapter.Link
 import dev.codeismail.linkcapture.adapter.LinkHistoryAdapter
-import dev.codeismail.linkcapture.data.AppDatabase
-import dev.codeismail.linkcapture.data.DbLink
 import dev.codeismail.linkcapture.state.Loading
 import dev.codeismail.linkcapture.state.Success
+import dev.codeismail.linkcapture.ui.MainActivity
 import dev.codeismail.linkcapture.utils.hide
 import dev.codeismail.linkcapture.utils.show
 import kotlinx.android.synthetic.main.history_fragment.*
 import kotlinx.android.synthetic.main.layout_empty_state.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class HistoryFragment : Fragment() {
 
     companion object {
-        fun newInstance() =
-            HistoryFragment()
+        val TAG = HistoryFragment::class.java.simpleName
     }
+
+    @Inject lateinit var linkHistoryAdapter: LinkHistoryAdapter
+    @Inject lateinit var historyFactory: HistoryFactory
 
     private var searchView: SearchView? = null
     private var queryTextListener: SearchView.OnQueryTextListener? = null
-    private lateinit var linkHistoryAdapter: LinkHistoryAdapter
     private val dbViewModel: HistoryViewModel by activityViewModels {
-        HistoryFactory(
-            AppDatabase.getInstance(
-                requireContext()
-            ).linkDao()
-        )
+        historyFactory
     }
 
     override fun onCreateView(
@@ -62,7 +59,6 @@ class HistoryFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        linkHistoryAdapter = LinkHistoryAdapter()
         historyListView.apply {
             adapter = linkHistoryAdapter
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -87,7 +83,7 @@ class HistoryFragment : Fragment() {
             val formattedDate = current.format(formatter)
             dbViewModel.saveLink(
                 listOf(
-                    DbLink(
+                    Link(
                         linkHistoryAdapter.getItem(position).id,
                         linkHistoryAdapter.getItem(position).linkString,
                         formattedDate
@@ -104,9 +100,9 @@ class HistoryFragment : Fragment() {
         historyToolbar.inflateMenu(R.menu.menu_history)
         val searchItem = menu.findItem(R.id.action_search)
         val searchManager =
-            activity!!.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+            requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView = searchItem.actionView as SearchView?
-        searchView?.setSearchableInfo(searchManager.getSearchableInfo(activity!!.componentName))
+        searchView?.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
         queryTextListener = object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 processUrlSearch(query)

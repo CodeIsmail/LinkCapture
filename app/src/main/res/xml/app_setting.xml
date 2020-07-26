@@ -23,4 +23,28 @@
         android:key="@string/key_dark_theme_label"
         android:title="@string/title_dark_theme_label"
         app:iconSpaceReserved="false" />
+
+    <PreferenceCategory
+        android:summary="@string/summary_task_schedule_label"
+        app:iconSpaceReserved="false"
+        app:title="@string/title_task_schedule_label">
+        <SeekBarPreference
+            android:key="@string/key_url_cleanup_label"
+            android:summary="@string/summary_url_cleanup_label"
+            android:title="@string/title_url_cleanup_label"
+            app:iconSpaceReserved="false"
+            android:defaultValue="9"
+            app:showSeekBarValue="true"
+            app:min="1"
+            android:max="24"/>
+        <SeekBarPreference
+            android:key="@string/key_image_cleanup_label"
+            android:summary="@string/summary_image_cleanup_label"
+            android:title="@string/title_image_cleanup_label"
+            app:iconSpaceReserved="false"
+            android:defaultValue="9"
+            app:showSeekBarValue="true"
+            app:min="1"
+            android:max="24"/>
+    </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

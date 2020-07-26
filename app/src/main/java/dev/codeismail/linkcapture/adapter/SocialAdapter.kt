@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.utils.CustomSocialCheckComponent
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.layout_link_list_item.view.*
 import kotlinx.android.synthetic.main.layout_social_item.view.*
+import javax.inject.Inject
 
-class SocialAdapter : RecyclerView.Adapter<SocialAdapter.LinkViewHolder>() {
+class SocialAdapter @Inject constructor() : RecyclerView.Adapter<SocialAdapter.LinkViewHolder>() {
     private var onItemClickListener: ((position: Int, view: View) -> Unit)? = null
     var data: List<Link> = emptyList()
         set(newList) {

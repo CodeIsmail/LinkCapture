@@ -8,4 +8,8 @@ class Link (val id: String = UUID.randomUUID().toString(), var linkString: Strin
     constructor(id: String, linkString: String, lastVisit: String) : this(id, linkString){
         this.lastVisit = lastVisit
     }
+
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other)
+    }
 }

@@ -15,4 +15,12 @@
     <string name="settings_title">Settings</string>
     <string name="empty_list_message">No urls saved</string>
     <string name="search_empty_list_message">No results found</string>
+    <string name="key_url_cleanup_label">key_url_cleanup</string>
+    <string name="title_url_cleanup_label">Url cleanup</string>
+    <string name="summary_url_cleanup_label">Manages your url by removing duplicates</string>
+    <string name="title_image_cleanup_label">Image cleanup</string>
+    <string name="summary_image_cleanup_label">You got the urls, that\'s what matters. We will clean up those images</string>
+    <string name="key_image_cleanup_label">key_image_cleanup</string>
+    <string name="summary_task_schedule_label">Schedule cleanup tasks that will be performed in the background</string>
+    <string name="title_task_schedule_label">Task Schedule</string>
 </resources>

@@ -5,29 +5,28 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.codeismail.linkcapture.adapter.Link
-import dev.codeismail.linkcapture.data.DbLink
-import dev.codeismail.linkcapture.data.LinkDao
+import dev.codeismail.linkcapture.data.Repository
 import dev.codeismail.linkcapture.state.Loading
 import dev.codeismail.linkcapture.state.Success
 import dev.codeismail.linkcapture.state.ViewState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class HistoryViewModel(private val linkDao: LinkDao) : ViewModel() {
+class HistoryViewModel (private val repo: Repository) : ViewModel() {
 
     private val viewStateMutableLiveData = MutableLiveData<ViewState>()
     private val viewStateSearch = MutableLiveData<ViewState>()
 
-    fun saveLink(links: List<DbLink>){
+    fun saveLink(links: List<Link>){
         viewModelScope.launch {
-            linkDao.insertAll(links)
+            repo.saveLinks(links)
         }
     }
 
     fun savedLinks(): LiveData<ViewState> {
         viewStateMutableLiveData.value = Loading
         viewModelScope.launch {
-            linkDao.getLinks().collect {
+            repo.loadLinks().collect {
                 viewStateMutableLiveData.value = Success(it.map { dbLink ->
                     Link(dbLink.id, dbLink.linkString, dbLink.lastVisit)
                 })
@@ -38,7 +37,7 @@ class HistoryViewModel(private val linkDao: LinkDao) : ViewModel() {
 
     fun searchUrl(query: String): LiveData<ViewState> {
         viewStateSearch.value = Loading
-        viewModelScope.launch { linkDao.search(query).collect {
+        viewModelScope.launch { repo.search(query).collect {
             viewStateSearch.value = Success(it.map {dbLink ->
                 Link(dbLink.id, dbLink.linkString, dbLink.lastVisit)
             })

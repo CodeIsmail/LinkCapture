@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.codeismail.linkcapture.R
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.layout_history_item.view.*
+import javax.inject.Inject
 
-class LinkHistoryAdapter : ListAdapter<Link, LinkHistoryAdapter.ViewHolder>(
+class LinkHistoryAdapter @Inject constructor(): ListAdapter<Link, LinkHistoryAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<Link>() {
 
         override fun areItemsTheSame(oldItem: Link, newItem: Link): Boolean =

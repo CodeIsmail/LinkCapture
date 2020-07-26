@@ -12,26 +12,27 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import dev.codeismail.linkcapture.R
+import dev.codeismail.linkcapture.adapter.Link
 import dev.codeismail.linkcapture.adapter.LinkAdapter
-import dev.codeismail.linkcapture.data.AppDatabase
-import dev.codeismail.linkcapture.data.DbLink
 import dev.codeismail.linkcapture.ui.SharedViewModel
 import dev.codeismail.linkcapture.ui.history.HistoryFactory
 import dev.codeismail.linkcapture.ui.history.HistoryViewModel
-import kotlinx.android.synthetic.main.fragment_action_dialog.*
+import kotlinx.android.synthetic.main.fragment_found_links.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class ActionDialogFragment : BottomSheetDialogFragment() {
+@AndroidEntryPoint
+class FoundLinksBottomSheetFragment : BottomSheetDialogFragment() {
+
+    @Inject lateinit var historyFactory: HistoryFactory
+    @Inject lateinit var linkAdapter: LinkAdapter
 
     private val viewModel: SharedViewModel by activityViewModels()
     private val dbViewModel: HistoryViewModel by activityViewModels {
-        HistoryFactory(
-            AppDatabase.getInstance(
-                requireContext()
-            ).linkDao()
-        )
+        historyFactory
     }
 
     override fun onCreateView(
@@ -39,14 +40,14 @@ class ActionDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_action_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_found_links, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val sharedPreference = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val shouldSave = sharedPreference.getBoolean(getString(R.string.key_save_label), false)
-        val linkAdapter = LinkAdapter()
+
         linkRv.apply {
             adapter = linkAdapter
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -56,13 +57,7 @@ class ActionDialogFragment : BottomSheetDialogFragment() {
             linkAdapter.submitList(it)
             if (shouldSave) {
                 dbViewModel.saveLink(
-                    it.map { link ->
-                        DbLink(
-                            link.id,
-                            link.linkString,
-                            "-"
-                        )
-                    })
+                    it)
             }
 
         })
@@ -76,7 +71,7 @@ class ActionDialogFragment : BottomSheetDialogFragment() {
             val formattedDate = current.format(formatter)
             dbViewModel.saveLink(
                 listOf(
-                    DbLink(
+                    Link(
                         linkAdapter.getItem(position).id,
                         linkAdapter.getItem(position).linkString,
                         formattedDate
@@ -90,6 +85,6 @@ class ActionDialogFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-
+        val TAG = FoundLinksBottomSheetFragment::class.java.simpleName
     }
 }

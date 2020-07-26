@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import dagger.hilt.android.AndroidEntryPoint
 import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.adapter.Link
 import dev.codeismail.linkcapture.adapter.SocialAdapter
@@ -19,10 +20,13 @@ import kotlinx.android.synthetic.main.fragment_social.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SocialFragment : DialogFragment() {
 
     private val viewModel: SharedViewModel by activityViewModels()
+    @Inject lateinit var socialAdapter: SocialAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,7 +39,6 @@ class SocialFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var tempList = mutableListOf<Link>()
-        val socialAdapter = SocialAdapter()
         socialViewPage.apply {
             adapter = socialAdapter
         }
@@ -64,7 +67,7 @@ class SocialFragment : DialogFragment() {
             when(viewItem.id){
                 R.id.twitterComponent -> {
                     val link = socialAdapter.data[position]
-                    if ((view as CustomSocialCheckComponent).getCheckState()){
+                    if ((viewItem as CustomSocialCheckComponent).getCheckState()){
                         val linkString =  "http://twitter.com/${link.linkString.removePrefix("@")}"
                         val newLink = Link(id =  link.id, linkString = linkString)
                         tempList.add(newLink)
@@ -76,7 +79,7 @@ class SocialFragment : DialogFragment() {
                 }
                 R.id.instagramComponent -> {
                     val link = socialAdapter.data[position]
-                    if ((view as CustomSocialCheckComponent).getCheckState()){
+                    if ((viewItem as CustomSocialCheckComponent).getCheckState()){
                         val linkString =  "http://instagram.com/${link.linkString.removePrefix("@")}"
                         val newLink = Link(id =  link.id, linkString = linkString)
                         tempList.add(newLink)
@@ -88,7 +91,7 @@ class SocialFragment : DialogFragment() {
                 }
                 R.id.githubComponent -> {
                     val link = socialAdapter.data[position]
-                    if ((view as CustomSocialCheckComponent).getCheckState()){
+                    if ((viewItem as CustomSocialCheckComponent).getCheckState()){
                         val linkString =  "http://github.com/${link.linkString.removePrefix("@")}"
                         val newLink = Link(id =  link.id, linkString = linkString)
                         tempList.add(newLink)
