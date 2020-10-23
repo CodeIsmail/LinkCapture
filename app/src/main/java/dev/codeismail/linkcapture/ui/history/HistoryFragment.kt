@@ -36,13 +36,10 @@ class HistoryFragment : Fragment() {
     }
 
     @Inject lateinit var linkHistoryAdapter: LinkHistoryAdapter
-    @Inject lateinit var historyFactory: HistoryFactory
 
     private var searchView: SearchView? = null
     private var queryTextListener: SearchView.OnQueryTextListener? = null
-    private val dbViewModel: HistoryViewModel by activityViewModels {
-        historyFactory
-    }
+    private val dbViewModel: HistoryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

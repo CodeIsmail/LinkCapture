@@ -158,7 +158,7 @@ class CaptureFragment : Fragment() {
                     this, cameraSelector, preview, imageCapture)
                 applyTapToFocus()
                 setUpPinchToZoom()
-                preview?.setSurfaceProvider(viewFinder.createSurfaceProvider())
+                preview?.setSurfaceProvider(viewFinder.surfaceProvider)
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }

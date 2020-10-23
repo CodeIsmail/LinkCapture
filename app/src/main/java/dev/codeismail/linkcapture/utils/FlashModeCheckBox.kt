@@ -7,7 +7,7 @@ import dev.codeismail.linkcapture.R
 
 class FlashModeCheckBox @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : CheckBox(context, attrs, defStyleAttr) {
+) : androidx.appcompat.widget.AppCompatCheckBox(context, attrs, defStyleAttr) {
 
     override fun setChecked(checked: Boolean) {
         super.setChecked(checked)

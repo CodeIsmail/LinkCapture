@@ -1,5 +1,6 @@
 package dev.codeismail.linkcapture.ui.history
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +13,7 @@ import dev.codeismail.linkcapture.state.ViewState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class HistoryViewModel (private val repo: Repository) : ViewModel() {
+class HistoryViewModel @ViewModelInject constructor (private val repo: Repository) : ViewModel() {
 
     private val viewStateMutableLiveData = MutableLiveData<ViewState>()
     private val viewStateSearch = MutableLiveData<ViewState>()

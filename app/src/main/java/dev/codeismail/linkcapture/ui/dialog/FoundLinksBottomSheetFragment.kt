@@ -1,6 +1,7 @@
 package dev.codeismail.linkcapture.ui.dialog
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -17,7 +17,6 @@ import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.adapter.Link
 import dev.codeismail.linkcapture.adapter.LinkAdapter
 import dev.codeismail.linkcapture.ui.SharedViewModel
-import dev.codeismail.linkcapture.ui.history.HistoryFactory
 import dev.codeismail.linkcapture.ui.history.HistoryViewModel
 import kotlinx.android.synthetic.main.fragment_found_links.*
 import java.time.LocalDateTime
@@ -27,13 +26,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FoundLinksBottomSheetFragment : BottomSheetDialogFragment() {
 
-    @Inject lateinit var historyFactory: HistoryFactory
     @Inject lateinit var linkAdapter: LinkAdapter
+    @Inject lateinit var sharedPreference: SharedPreferences
 
     private val viewModel: SharedViewModel by activityViewModels()
-    private val dbViewModel: HistoryViewModel by activityViewModels {
-        historyFactory
-    }
+    private val dbViewModel: HistoryViewModel by activityViewModels ()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +42,6 @@ class FoundLinksBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val sharedPreference = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val shouldSave = sharedPreference.getBoolean(getString(R.string.key_save_label), false)
 
         linkRv.apply {

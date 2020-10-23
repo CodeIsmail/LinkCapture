@@ -2,12 +2,13 @@ package dev.codeismail.linkcapture.ui
 
 import android.net.Uri
 import androidx.camera.core.ImageProxy
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dev.codeismail.linkcapture.adapter.Link
 
-class SharedViewModel : ViewModel() {
+class SharedViewModel @ViewModelInject constructor(): ViewModel() {
 
     private val imageUri = MutableLiveData<Uri>()
     private val imageProxy = MutableLiveData<ImageProxy>()

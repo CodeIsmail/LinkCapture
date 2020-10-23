@@ -1,20 +1,21 @@
 package dev.codeismail.linkcapture
 
 import android.app.Application
-import androidx.preference.PreferenceManager
+import android.content.SharedPreferences
 import dagger.hilt.android.HiltAndroidApp
 import dev.codeismail.linkcapture.utils.ThemeManager
+import javax.inject.Inject
 
 @HiltAndroidApp
 class LinkCapture : Application() {
+
+    @Inject lateinit var sharedPreference: SharedPreferences
     override fun onCreate() {
         super.onCreate()
         initTheme()
-        //val urlWorkerRequest = PeriodicWorkRequest
     }
 
     private fun initTheme(){
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        ThemeManager.applyTheme(preferences.getBoolean(getString(R.string.key_dark_theme_label),false)!!)
+        ThemeManager.applyTheme(sharedPreference.getBoolean(getString(R.string.key_dark_theme_label),false))
     }
 }
