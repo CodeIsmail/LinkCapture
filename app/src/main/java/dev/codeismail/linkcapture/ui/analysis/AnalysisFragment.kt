@@ -22,16 +22,16 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import coil.api.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.text.FirebaseVisionText
-import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
 import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.adapter.Link
 import dev.codeismail.linkcapture.ui.SharedViewModel
 import dev.codeismail.linkcapture.utils.Manager
 import dev.codeismail.linkcapture.utils.NetworkResult
 import kotlinx.android.synthetic.main.fragment_display.*
+import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -55,7 +55,7 @@ class AnalysisFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         networkManager.result.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "Value Set ${it.name}")
+            Timber.d("Value Set ${it.name}")
             networkState = it
         })
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -108,13 +108,13 @@ class AnalysisFragment : Fragment() {
                     this, cameraSelector, imageAnalyzer
                 )
             } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
+                Timber.e(exc,"Use case binding failed")
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
-    private fun processTextBlock(result: FirebaseVisionText) {
+    private fun processTextBlock(result: Text) {
         val linkList = ArrayList<Link>()
         for (block in result.textBlocks) {
             for (line in block.lines) {
@@ -161,23 +161,15 @@ class AnalysisFragment : Fragment() {
         override fun analyze(imageProxy: ImageProxy) {
             val mediaImage = imageProxy.image
             if (mediaImage != null) {
-                val image = FirebaseVisionImage.fromFilePath(requireContext(), uri)
-                val detector: FirebaseVisionTextRecognizer = if (networkState == NetworkResult.CONNECTED ){
-                    Log.d(TAG, "Using on device")
-                    FirebaseVision.getInstance()
-                        .onDeviceTextRecognizer
-                }else{
-                    Log.d(TAG, "Using cloud")
-                    FirebaseVision.getInstance()
-                        .cloudTextRecognizer
-                }
-                detector.processImage(image)
-                    .addOnSuccessListener { firebaseVisionText ->
+                val image = InputImage.fromFilePath(requireContext(), uri)
+                val detector = TextRecognition.getClient()
+                detector.process(image)
+                    .addOnSuccessListener { visionText ->
                         dialog.dismiss()
-                        processTextBlock(firebaseVisionText)
+                        processTextBlock(visionText)
                     }
                     .addOnFailureListener {
-                        Log.d(TAG, "Exception thrown: ${it.message}")
+                        Timber.d("Exception thrown: ${it.message}")
                         dialog.dismiss()
                         Toast.makeText(
                             requireContext(),
@@ -191,6 +183,5 @@ class AnalysisFragment : Fragment() {
     }
 
     companion object {
-        val TAG = AnalysisFragment::class.java.simpleName
     }
 }

@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.ui.SharedViewModel
 import kotlinx.android.synthetic.main.capture_fragment.*
+import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -88,10 +89,10 @@ class CaptureFragment : Fragment() {
 
         flashBtn.setOnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
-                Log.d(TAG, "Hello $isChecked")
+                Timber.d( "Button is checked: $isChecked")
                 imageCapture?.flashMode = ImageCapture.FLASH_MODE_ON
             }else{
-                Log.d(TAG, "Hello $isChecked")
+                Timber.d( "Button is checked: $isChecked")
                 imageCapture?.flashMode = ImageCapture.FLASH_MODE_OFF
             }
         }
@@ -160,7 +161,7 @@ class CaptureFragment : Fragment() {
                 setUpPinchToZoom()
                 preview?.setSurfaceProvider(viewFinder.surfaceProvider)
             } catch(exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
+                Timber.e(exc, "Use case binding failed")
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
@@ -213,13 +214,13 @@ class CaptureFragment : Fragment() {
         imageCapture.takePicture(
             outputOptions, ContextCompat.getMainExecutor(requireContext()), object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
-                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                    Timber.e(exc, "Photo capture failed: ${exc.message}")
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
                     viewModel.passImageData(savedUri)
-                    Log.d(TAG, "Photo capture succeeded: $savedUri")
+                    Timber.d( "Photo capture succeeded: $savedUri")
                     findNavController().navigate(R.id.action_captureFragment_to_displayFragment)
                 }
             })

@@ -9,23 +9,25 @@ import android.net.NetworkRequest
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import timber.log.Timber
 
 class Callback : ConnectivityManager.NetworkCallback() {
 
     val result = MutableLiveData<NetworkResult>()
 
-    override fun onLost(network: Network?) {
-        Log.d("Hello","Network disconnected")
+
+    override fun onLost(network: Network) {
+        Timber.d("Network disconnected")
         result.postValue(NetworkResult.DISCONNECTED)
     }
 
-    override fun onLosing(network: Network?, maxMsToLive: Int) {
-        Log.d("Hello","Network disconnecting")
+    override fun onLosing(network: Network, maxMsToLive: Int) {
+        Timber.d("Network disconnecting")
         result.postValue(NetworkResult.DISCONNECTING)
     }
 
-    override fun onAvailable(network: Network?) {
-        Log.d("Hello","Network connected")
+    override fun onAvailable(network: Network) {
+        Timber.d("Network connected")
         result.postValue(NetworkResult.CONNECTED)
     }
 }
