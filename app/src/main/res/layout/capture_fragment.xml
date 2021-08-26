@@ -18,23 +18,24 @@
 
     <ImageButton
         android:id="@+id/settingBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@null"
+        android:contentDescription="Settings"
         android:src="@drawable/ic_settings"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <CheckBox
+    <ImageButton
         android:id="@+id/flashBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginTop="16dp"
-        android:includeFontPadding="false"
-        android:button="@drawable/checkbox_state_flash"
-        android:gravity="center|end"
+        android:background="@null"
+        android:contentDescription="Enable Flash"
+        android:src="@drawable/checkbox_state_flash"
         app:layout_constraintEnd_toEndOf="@+id/captureBtn"
         app:layout_constraintStart_toStartOf="@+id/captureBtn"
         app:layout_constraintTop_toTopOf="parent" />
@@ -44,25 +45,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:background="@null"
+        android:contentDescription="Gallery"
         android:elevation="2dp"
         android:src="@drawable/ic_image"
-        app:layout_constraintBottom_toBottomOf="@+id/captureBtn"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/captureBtn"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/captureBtn" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/captureBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/ic_camera"
+        android:background="@null"
         android:backgroundTint="@null"
+        android:contentDescription="Capture"
         android:elevation="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_capture"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/historyBtn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/previewBtn" />
@@ -71,15 +72,21 @@
         android:id="@+id/historyBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="@null"
+        android:contentDescription="History"
         android:elevation="2dp"
         android:src="@drawable/ic_history"
-        app:layout_constraintBottom_toBottomOf="@+id/captureBtn"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/captureBtn"
-        app:layout_constraintTop_toTopOf="@+id/captureBtn" />
+        app:layout_constraintStart_toEndOf="@+id/captureBtn" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="36dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,9 +6,9 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.codeismail.linkcapture.adapter.Link
-
-class SharedViewModel @ViewModelInject constructor(): ViewModel() {
+class SharedViewModel : ViewModel() {
 
     private val imageUri = MutableLiveData<Uri>()
     private val imageProxy = MutableLiveData<ImageProxy>()

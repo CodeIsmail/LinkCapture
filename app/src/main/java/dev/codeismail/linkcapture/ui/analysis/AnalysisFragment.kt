@@ -3,7 +3,6 @@ package dev.codeismail.linkcapture.ui.analysis
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,14 +19,18 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import coil.api.load
+import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.TextRecognizerOptionsInterface
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import dev.codeismail.linkcapture.R
 import dev.codeismail.linkcapture.adapter.Link
 import dev.codeismail.linkcapture.ui.SharedViewModel
+import dev.codeismail.linkcapture.utils.Keys.SOCIAL_PATTERN
+import dev.codeismail.linkcapture.utils.Keys.URL_PATTERN
 import dev.codeismail.linkcapture.utils.Manager
 import dev.codeismail.linkcapture.utils.NetworkResult
 import kotlinx.android.synthetic.main.fragment_display.*
@@ -120,9 +123,9 @@ class AnalysisFragment : Fragment() {
             for (line in block.lines) {
                 linkList.addAll(line.elements.filter { element ->
                     val pattern: Regex = if (element.text.startsWith("@")){
-                        "^[@][a-zA-Z0-9_.]+$".toRegex()
+                        SOCIAL_PATTERN.toRegex()
                     }else{
-                        "^((http:/{2})|(HTTP:/{2}))?((https:/{2})|(HTTPS:/{2}))?((w{3}.)|(W{3}.))?([a-zA-Z0-9]*[.])*[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}(/[a-zA-Z0-9]*.*-*)*$".toRegex()
+                        URL_PATTERN.toRegex()
                     }
                     pattern.matches(element.text)
                 }.map { element ->
@@ -158,18 +161,19 @@ class AnalysisFragment : Fragment() {
     private inner class TextImageAnalyzer(private val uri: Uri, private val dialog: AlertDialog) :
         ImageAnalysis.Analyzer {
         @SuppressLint("UnsafeExperimentalUsageError")
+        @androidx.camera.core.ExperimentalGetImage
         override fun analyze(imageProxy: ImageProxy) {
             val mediaImage = imageProxy.image
             if (mediaImage != null) {
                 val image = InputImage.fromFilePath(requireContext(), uri)
-                val detector = TextRecognition.getClient()
+                val detector = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                 detector.process(image)
                     .addOnSuccessListener { visionText ->
                         dialog.dismiss()
                         processTextBlock(visionText)
                     }
                     .addOnFailureListener {
-                        Timber.d("Exception thrown: ${it.message}")
+                        Timber.e("Exception thrown: ${it.message}")
                         dialog.dismiss()
                         Toast.makeText(
                             requireContext(),

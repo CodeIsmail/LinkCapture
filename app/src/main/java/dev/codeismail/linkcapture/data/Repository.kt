@@ -2,8 +2,9 @@ package dev.codeismail.linkcapture.data
 
 import dev.codeismail.linkcapture.adapter.Link
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class Repository(private val linkDao: LinkDao){
+class Repository @Inject constructor(private val linkDao: LinkDao){
     fun search(query: String): Flow<List<DbLink>> {
         return linkDao.search(query)
     }

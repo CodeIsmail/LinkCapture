@@ -42,7 +42,6 @@ class CaptureFragment : Fragment() {
 
 
     companion object {
-        val TAG = CaptureFragment::class.java.simpleName
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 
@@ -76,6 +75,7 @@ class CaptureFragment : Fragment() {
                 SimpleDateFormat(
                     FILENAME_FORMAT, Locale.US
                 ).format(System.currentTimeMillis()) + ".jpg")
+            captureBtn.setImageResource(R.drawable.ic_capture_icon)
             takePhoto(photoFile)
 
         }
@@ -87,14 +87,18 @@ class CaptureFragment : Fragment() {
             findNavController().navigate(R.id.action_captureFragment_to_historyFragment)
         }
 
-        flashBtn.setOnCheckedChangeListener { buttonView, isChecked ->
-            if(isChecked){
-                Timber.d( "Button is checked: $isChecked")
-                imageCapture?.flashMode = ImageCapture.FLASH_MODE_ON
-            }else{
-                Timber.d( "Button is checked: $isChecked")
-                imageCapture?.flashMode = ImageCapture.FLASH_MODE_OFF
-            }
+//        flashBtn.setOnCheckedChangeListener { _, isChecked ->
+//            if(isChecked){
+//                Timber.d( "Button is checked: $isChecked")
+//                imageCapture?.flashMode = ImageCapture.FLASH_MODE_ON
+//            }else{
+//                Timber.d( "Button is checked: $isChecked")
+//                imageCapture?.flashMode = ImageCapture.FLASH_MODE_OFF
+//            }
+//        }
+
+        previewBtn.setOnClickListener {
+
         }
     }
 
@@ -228,9 +232,9 @@ class CaptureFragment : Fragment() {
     }
 
     private fun getOutputDirectory(): File {
-        val mediaDir = requireContext().externalMediaDirs.firstOrNull()?.let {
+        val mediaDir = requireContext().filesDir.let {
             File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
-        return if (mediaDir != null && mediaDir.exists())
+        return if (mediaDir.exists())
             mediaDir else requireContext().filesDir
     }
     private fun allPermissionsGranted(): Boolean = REQUIRED_PERMISSIONS.all {
