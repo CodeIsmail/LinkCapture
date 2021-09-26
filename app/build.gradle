@@ -9,6 +9,20 @@ apply plugin: 'com.google.firebase.firebase-perf'
 
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file(rootDir.absolutePath + '/keystore/keystore.ks')
+            storePassword '***000###'
+            keyAlias 'linkcapture'
+            keyPassword '***000###'
+        }
+        release {
+            storeFile file(rootDir.absolutePath + '/keystore/keystore.ks')
+            storePassword '***000###'
+            keyAlias 'linkcapture'
+            keyPassword '***000###'
+        }
+    }
     compileSdkVersion rootProject.compileSdkVersion
 
     defaultConfig {
